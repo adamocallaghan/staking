@@ -5,8 +5,9 @@ pragma solidity 0.8.19;
 import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
 
-contract Staking is ReentrancyGuard {
+contract Staking is ReentrancyGuard, Ownable {
 
     /*  
         ==============================================
@@ -20,7 +21,7 @@ contract Staking is ReentrancyGuard {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    address public owner;
+    // address public owner;
 
     // Timestamps
     uint256 public initialTimestamp;
@@ -41,7 +42,7 @@ contract Staking is ReentrancyGuard {
 
     // Constructor
     constructor(IERC20 _erc20_contract_address) {
-        owner = msg.sender;
+        // owner = msg.sender;
         timestampSet = false;
         require(address(_erc20_contract_address) != address(0), "Can't be zero address");
         erc20Contract = _erc20_contract_address;
@@ -102,10 +103,10 @@ contract Staking is ReentrancyGuard {
     //     locked = false;
     // }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Can only be accessed by the owner");
-        _;
-    }
+    // modifier onlyOwner() {
+    //     require(msg.sender == owner, "Can only be accessed by the owner");
+    //     _;
+    // }
 
     modifier timestampNotSet() {
         require(timestampSet == false, "Timestamp already set");

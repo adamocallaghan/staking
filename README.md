@@ -1,13 +1,15 @@
-# Sample Hardhat Project
+# Basic Staking Implementation
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+Very basic staking contract...
 
-Try running some of the following tasks:
+> Allows owner to set what ERC20 token is stakable.
+> Allows owner to set what time period tokens must be staked for.
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
-```
+> Users can stake and unstake tokens.
+
+> Uses SafeERC20, SafeMath, ReentrancyGuard and Ownable from OpenZeppelin.
+
+
+## To be done...
+
+> ERC20 rewards
