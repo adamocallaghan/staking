@@ -54,6 +54,7 @@ contract Staking {
     */
 
     
+    
 
 
 
@@ -61,6 +62,27 @@ contract Staking {
         =============================================
         ================= MODIFIERS =================
         =============================================
-    */    
+    */ 
+
+    modifier noReentrant() {
+        require(!locked, "Reentrancy not allowed");
+        locked = true;
+        _;
+        locked = false;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Can only be accessed by the owner");
+    }
+
+    modifier timestampNotSet() {
+        require(timestampSet == false, "Timestamp already set");
+        _;
+    }
+
+    modifier timestampIsSet() {
+        require(timestampSet == true, "Set the timestamp first");
+        _;
+    }
 
 }
