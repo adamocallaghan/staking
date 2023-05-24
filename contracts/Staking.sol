@@ -4,8 +4,9 @@ pragma solidity 0.8.19;
 
 import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "../node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract Staking {
+contract Staking is ReentrancyGuard {
 
     /*  
         ==============================================
@@ -61,7 +62,7 @@ contract Staking {
     }
     
     // Stake tokens
-    function stakeTokens(IERC20 token, uint256 amount) public timestampIsSet noReentrant {
+    function stakeTokens(IERC20 token, uint256 amount) public timestampIsSet nonReentrant {
         require(token == erc20Contract, "Only the ERC20 token contract approved by the owner can be staked");
         require(amount <= token.balanceOf(msg.sender), "You do not have enought tokens to stake, try a lower amount");
         token.safeTransferFrom(msg.sender, address(this), amount);
@@ -69,7 +70,7 @@ contract Staking {
         emit TokensStaked(msg.sender, amount);
     }
 
-    function unstakeTokens(IERC20 token, uint256 amount) public timestampIsSet noReentrant {
+    function unstakeTokens(IERC20 token, uint256 amount) public timestampIsSet nonReentrant {
         require(balances[msg.sender] >= amount, "Insufficient balance");
         require(token == erc20Contract, "Incorrect token parameter passed in, it must be the same as the staked tokens");
         if(block.timestamp >= timePeriod) {
@@ -82,7 +83,7 @@ contract Staking {
         }
     }
 
-    // function transferAccidentallyLockedTokens(IERC20 token, uint256 amount) public onlyOwner noReentrant {
+    // function transferAccidentallyLockedTokens(IERC20 token, uint256 amount) public onlyOwner nonReentrant {
     //     require(address(token) != address(0), "Token address can't be zero");
     //     require(token != erc20Contract, "Can't be the official staking token of this contract");
     //     token.safeTransfer(owner, amount);
@@ -94,12 +95,12 @@ contract Staking {
         =============================================
     */ 
 
-    modifier noReentrant() {
-        require(!locked, "Reentrancy not allowed");
-        locked = true;
-        _;
-        locked = false;
-    }
+    // modifier nonReentrant() {
+    //     require(!locked, "Reentrancy not allowed");
+    //     locked = true;
+    //     _;
+    //     locked = false;
+    // }
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Can only be accessed by the owner");
