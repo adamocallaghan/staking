@@ -6,8 +6,9 @@ import "../node_modules/@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
 import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../node_modules/@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../node_modules/@openzeppelin/contracts/access/Ownable.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract Staking is ReentrancyGuard, Ownable {
+contract Staking is ERC20, ReentrancyGuard, Ownable {
 
     /*  
         ==============================================
@@ -41,7 +42,7 @@ contract Staking is ReentrancyGuard, Ownable {
     event TokensUnstaked(address to, uint256 amount);
 
     // Constructor
-    constructor(IERC20 _erc20_contract_address) {
+    constructor(IERC20 _erc20_contract_address) ERC20("STAKEHOUSE", "STKHSE") {
         // owner = msg.sender;
         timestampSet = false;
         require(address(_erc20_contract_address) != address(0), "Can't be zero address");
