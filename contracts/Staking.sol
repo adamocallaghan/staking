@@ -27,9 +27,9 @@ contract Staking {
     uint256 public timePeriod;
 
     // Balances
-    mapping(address => uint256) public alreadyWithdrawn;
+    // mapping(address => uint256) public alreadyWithdrawn;
     mapping(address => uint256) public balances;
-    uint256 public contractBalance;
+    // uint256 public contractBalance;
 
     // Stakable token
     IERC20 public erc20Contract;
@@ -73,7 +73,7 @@ contract Staking {
         require(balances[msg.sender] >= amount, "Insufficient balance");
         require(token == erc20Contract, "Incorrect token parameter passed in, it must be the same as the staked tokens");
         if(block.timestamp >= timePeriod) {
-            alreadyWithdrawn[msg.sender] = alreadyWithdrawn[msg.sender].add(amount);
+            // alreadyWithdrawn[msg.sender] = alreadyWithdrawn[msg.sender].add(amount);
             balances[msg.sender] = balances[msg.sender].sub(amount);
             token.safeTransfer(msg.sender, amount);
             emit TokensUnstaked(msg.sender, amount);
@@ -82,11 +82,11 @@ contract Staking {
         }
     }
 
-    function transferAccidentallyLockedTokens(IERC20 token, uint256 amount) public onlyOwner noReentrant {
-        require(address(token) != address(0), "Token address can't be zero");
-        require(token != erc20Contract, "Can't be the official staking token of this contract");
-        token.safeTransfer(owner, amount);
-    }
+    // function transferAccidentallyLockedTokens(IERC20 token, uint256 amount) public onlyOwner noReentrant {
+    //     require(address(token) != address(0), "Token address can't be zero");
+    //     require(token != erc20Contract, "Can't be the official staking token of this contract");
+    //     token.safeTransfer(owner, amount);
+    // }
 
     /*  
         =============================================
