@@ -35,8 +35,8 @@ contract Staking {
     IERC20 public erc20Contract;
 
     // Events
-    event tokensStaked(address from, uint256 amount);
-    event tokensUnstaked(address to, uint256 amount);
+    event TokensStaked(address from, uint256 amount);
+    event TokensUnstaked(address to, uint256 amount);
 
     // Constructor
     constructor(IERC20 _erc20_contract_address) {
@@ -53,10 +53,40 @@ contract Staking {
         =============================================
     */
 
+    // Minimum staking period (set by owner)
+    function setTimestamp(uint256 _timePeriodInSeconds) public onlyOwner timestampNotSet {
+        timestampSet = true;
+        initialTimestamp = block.timestamp;
+        timePeriod = initialTimestamp.add(_timePeriodInSeconds);
+    }
     
-    
+    // Stake tokens
+    function stakeTokens(IERC20 token, uint256 amount) public timestampIsSet noReentrant {
+        require(token == erc20Contract, "Only the ERC20 token contract approved by the owner can be staked");
+        require(amount <= token.balanceOf(msg.sender), "You do not have enought tokens to stake, try a lower amount");
+        token.safeTransferFrom(msg.sender, address(this), amount);
+        balances[msg.sender] = balances[msg.sender].add(amount);
+        emit TokensStaked(msg.sender, amount);
+    }
 
+    function unstakeTokens(IERC20 token, uint256 amount) public timestampIsSet noReentrant {
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+        require(token == erc20Contract, "Incorrect token parameter passed in, it must be the same as the staked tokens");
+        if(block.timestamp >= timePeriod) {
+            alreadyWithdrawn[msg.sender] = alreadyWithdrawn[msg.sender].add(amount);
+            balances[msg.sender] = balances[msg.sender].sub(amount);
+            token.safeTransfer(msg.sender, amount);
+            emit TokensUnstaked(msg.sender, amount);
+        } else {
+            revert("Tokens can't be unstaked until the timePeriod has passed");
+        }
+    }
 
+    function transferAccidentallyLockedTokens(IERC20 token, uint256 amount) public onlyOwner noReentrant {
+        require(address(token) != address(0), "Token address can't be zero");
+        require(token != erc20Contract, "Can't be the official staking token of this contract");
+        token.safeTransfer(owner, amount);
+    }
 
     /*  
         =============================================
@@ -73,6 +103,7 @@ contract Staking {
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Can only be accessed by the owner");
+        _;
     }
 
     modifier timestampNotSet() {
