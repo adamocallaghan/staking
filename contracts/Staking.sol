@@ -15,7 +15,7 @@ contract Staking is ReentrancyGuard, Ownable {
         ==============================================
     */
 
-    bool internal locked; // reentrancy lock
+    // bool internal locked; // reentrancy lock
 
     // Libraries
     using SafeERC20 for IERC20;
@@ -46,7 +46,7 @@ contract Staking is ReentrancyGuard, Ownable {
         timestampSet = false;
         require(address(_erc20_contract_address) != address(0), "Can't be zero address");
         erc20Contract = _erc20_contract_address;
-        locked = false;
+        // locked = false;
     }
 
     /*  
